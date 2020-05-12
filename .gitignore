@@ -129,4 +129,8 @@ dmypy.json
 .pyre/
 
 # Pickle file
-.pkl
+*.pkl
+
+# Mac uniqe folder & file
+.idea/
+.DS_Store
