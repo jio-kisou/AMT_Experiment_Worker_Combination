@@ -18,7 +18,7 @@ choices = list(range(0, 7))
 df = pd.DataFrame()
 breed_to_choice_dic = {'Coyo': 0, 'Dhol': 1, 'Husk': 2, 'Alas': 3, 'Samo': 4, 'Germ': 5, 'wolf': 6}
 choice_num = len(breed_to_choice_dic)
-delete_list = list(range(15)) + list(range(16, 28)) + list(range(48, 102))# + list(range(109, 117)) + list(range(109, 117))
+delete_list = list(range(15)) + list(range(16, 28)) + list(range(48, 102))
 
 #データ読み込み
 #all_df, correct_answer_list = read_file(breed_to_choice_dic)
@@ -33,7 +33,7 @@ for i in range(len(correct_answer_list)):
 #事前確率
 prior_probability = collections.Counter(correct_answer_list)
 for key in prior_probability:
-    prior_probability[key] = float(prior_probability[key]) / float(len(correct_answer_list))
+    prior_probability[key] = float(prior_probability[key])  / float(len(correct_answer_list))
 
 #ワーカーの回答リスト
 worker_answer_list = []
