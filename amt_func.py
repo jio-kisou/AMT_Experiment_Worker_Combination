@@ -133,3 +133,15 @@ def real_probability(worker_combi_list, worker_answer_list, correct_answer_list)
         probability = correct_num / float(len(correct_answer_list))
         probability_list.append(probability)
     return mean(probability_list)
+
+
+def distance_ranking(np_worker_vectors, data_num):
+    distance_dic = {}
+    all_worker_pair = itertools.combinations(list(range(data_num)), 2)
+    for worker_pair in all_worker_pair:
+        worker_a = np_worker_vectors[worker_pair[0], :]
+        worker_b = np_worker_vectors[worker_pair[1], :]
+        distance = np.linalg.norm(worker_a - worker_b)
+        distance_dic[worker_pair] = distance
+    sorted_distance_dic = sorted(distance_dic.items(), key=lambda x: x[1])
+    return sorted_distance_dic

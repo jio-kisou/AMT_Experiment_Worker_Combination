@@ -10,7 +10,7 @@ import pyclustering
 from pyclustering.cluster import xmeans
 import pandas as pd
 from tqdm import tqdm
-from amt_func import read_file, make_confusion_matrix, choice_teams, expectation, real_probability
+from amt_func import read_file, make_confusion_matrix, choice_teams, expectation, real_probability, distance_ranking
 
 data_num = 50
 worker_combi_num = 5
@@ -33,7 +33,7 @@ for i in range(len(correct_answer_list)):
 #事前確率
 prior_probability = collections.Counter(correct_answer_list)
 for key in prior_probability:
-    prior_probability[key] = float(prior_probability[key])  / float(len(correct_answer_list))
+    prior_probability[key] = float(prior_probability[key]) / float(len(correct_answer_list))
 
 #ワーカーの回答リスト
 worker_answer_list = []
@@ -65,6 +65,9 @@ answer_data_remove_correct = np.delete(one_hot_data, correct_answer_ref, 1)
 
 correct_dim_twice_data = np.copy(one_hot_data)
 correct_dim_twice_data[:, correct_answer_ref] = correct_dim_twice_data[:, correct_answer_ref] * 10000
+
+#worker間の距離のランキング
+sorted_distance_dic = distance_ranking(one_hot_data, data_num)
 
 
 print('---------------------------------------------------')
