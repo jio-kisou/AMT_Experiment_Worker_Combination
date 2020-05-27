@@ -50,7 +50,7 @@ pca_trans = pca.transform(one_hot_data)
 # 可視化
 fig = plt.figure(figsize=(8,6))
 plt.scatter(pca_trans[:, 0], pca_trans[:, 1])
-plt.savefig("PCA_Image/pca_trans_" + str(data_num) + ".png")
+plt.savefig("img/PCA_Image/pca_trans_" + str(data_num) + ".png")
 # plt.show()
 
 # KernelPCA
@@ -61,7 +61,7 @@ kernel_pca_trans = kernel_pca.transform(one_hot_data)
 # 可視化
 fig = plt.figure(figsize=(8,6))
 plt.scatter(kernel_pca_trans[:, 0], kernel_pca_trans[:, 1])
-plt.savefig("KernelPCA_Image/kernel_pca_trans_" + str(data_num) + ".png")
+plt.savefig("img/KernelPCA_Image/kernel_pca_trans_" + str(data_num) + ".png")
 # plt.show()
 
 # # Isomap
@@ -72,7 +72,7 @@ plt.savefig("KernelPCA_Image/kernel_pca_trans_" + str(data_num) + ".png")
 # # 可視化
 # fig = plt.figure(figsize=(8,6))
 # plt.scatter(isomap_trans[:, 0], isomap_trans[:, 1])
-# plt.savefig("Isomap_Image/isomap_trans_" + str(data_num) + ".png")
+# plt.savefig("img/Isomap_Image/isomap_trans_" + str(data_num) + ".png")
 # # plt.show()
 
 # LocallyLinearEmbedding
@@ -83,7 +83,7 @@ locally_linear_embedding_trans = locally_linear_embedding.transform(one_hot_data
 # 可視化
 fig = plt.figure(figsize=(8,6))
 plt.scatter(locally_linear_embedding_trans[:, 0], locally_linear_embedding_trans[:, 1])
-plt.savefig("LocallyLinearEmbedding_Image/locally_linear_embedding_trans_" + str(data_num) + ".png")
+plt.savefig("img/LocallyLinearEmbedding_Image/locally_linear_embedding_trans_" + str(data_num) + ".png")
 # plt.show()
 
 # tSNE
@@ -93,5 +93,5 @@ tSNE_trans = tSNE.fit_transform(one_hot_data)
 # 可視化
 fig = plt.figure(figsize=(8,6))
 plt.scatter(tSNE_trans[:, 0], tSNE_trans[:, 1])
-plt.savefig("tSNE_Image/tSNE_trans_" + str(data_num) + ".png")
+plt.savefig("img/tSNE_Image/tSNE_trans_" + str(data_num) + ".png")
 # plt.show()
