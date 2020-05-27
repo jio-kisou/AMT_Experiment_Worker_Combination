@@ -7,7 +7,7 @@ from sklearn.manifold import Isomap, LocallyLinearEmbedding, TSNE
 import pandas as pd
 
 
-data_num = 30
+data_num = 50
 breed_to_choice_dic = {'Coyo': 0, 'Dhol': 1, 'Husk': 2, 'Alas': 3, 'Samo': 4, 'Germ': 5, 'wolf': 6}
 choice_num = len(breed_to_choice_dic)
 
