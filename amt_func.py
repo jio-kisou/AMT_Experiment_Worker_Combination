@@ -57,7 +57,7 @@ def make_confusion_matrix(correct_answer_list, worker_answer_list, choice_num):
         if accurate < 0.40:
             spammer_count = spammer_count + 1
         accurate_list.append(accurate)
-    #print("spammer_num: " + str(spammer_count))
+    # print("spammer_num: " + str(spammer_count))
     return confusion_matrix_list, accurate_list
 
 
@@ -141,7 +141,8 @@ def distance_ranking(np_worker_vectors, data_num):
     for worker_pair in all_worker_pair:
         worker_a = np_worker_vectors[worker_pair[0], :]
         worker_b = np_worker_vectors[worker_pair[1], :]
-        distance = np.linalg.norm(worker_a - worker_b)
+        worker_a_b = worker_a - worker_b
+        distance = np.linalg.norm(worker_a_b)
         distance_dic[worker_pair] = distance
     sorted_distance_dic = sorted(distance_dic.items(), key=lambda x: x[1])
     return sorted_distance_dic

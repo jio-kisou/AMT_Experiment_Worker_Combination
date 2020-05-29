@@ -20,22 +20,22 @@ breed_to_choice_dic = {'Coyo': 0, 'Dhol': 1, 'Husk': 2, 'Alas': 3, 'Samo': 4, 'G
 choice_num = len(breed_to_choice_dic)
 delete_list = list(range(15)) + list(range(16, 28)) + list(range(48, 102))
 
-#データ読み込み
-#all_df, correct_answer_list = read_file(breed_to_choice_dic)
+# データ読み込み
+# all_df, correct_answer_list = read_file(breed_to_choice_dic)
 all_df = pd.read_pickle("all_df.pkl")
 correct_answer_list = pd.read_pickle("correct_answer_list.pkl")
 
-#vectorでの正当の次元
+# vectorでの正当の次元
 correct_answer_ref = []
 for i in range(len(correct_answer_list)):
     correct_answer_ref.append(i*7 + correct_answer_list[i])
 
-#事前確率
+# 事前確率
 prior_probability = collections.Counter(correct_answer_list)
 for key in prior_probability:
     prior_probability[key] = float(prior_probability[key]) / float(len(correct_answer_list))
 
-#ワーカーの回答リスト
+# ワーカーの回答リスト
 worker_answer_list = []
 for index, row in all_df.iterrows():
     worker_answers = []
@@ -44,7 +44,7 @@ for index, row in all_df.iterrows():
             worker_answers.append(i % choice_num)
     worker_answer_list.append(worker_answers)
 
-#混同行列と足切り
+# 混同行列と足切り
 confusion_matrix_list, accurate_list = make_confusion_matrix(correct_answer_list, worker_answer_list, choice_num)
 sorted_accurate_list = sorted(enumerate(accurate_list), key=lambda x: x[1])
 low_accurate_list = []
@@ -56,7 +56,7 @@ for i in sorted(low_accurate_list, reverse=True):
 for i in sorted(low_accurate_list, reverse=True):
     worker_answer_list.pop(i)
 
-#one-hotベクトル化
+# one-hotベクトル化
 np_data = np.array(worker_answer_list).reshape(-1, 1)
 enc = OneHotEncoder(categories="auto", sparse=False, dtype=np.float32)
 one_hot_data = enc.fit_transform(np_data).reshape(data_num, -1)
@@ -64,10 +64,12 @@ one_hot_data = enc.fit_transform(np_data).reshape(data_num, -1)
 answer_data_remove_correct = np.delete(one_hot_data, correct_answer_ref, 1)
 
 correct_dim_twice_data = np.copy(one_hot_data)
-correct_dim_twice_data[:, correct_answer_ref] = correct_dim_twice_data[:, correct_answer_ref] * 10000
+correct_dim_twice_data[:, correct_answer_ref] = correct_dim_twice_data[:, correct_answer_ref] * 2.0
 
-#worker間の距離のランキング
-sorted_distance_dic = distance_ranking(one_hot_data, data_num)
+# worker間の距離のランキング
+sorted_distance_dic = distance_ranking(answer_data_remove_correct, data_num)
+for i, pair in enumerate(sorted_distance_dic):
+    print(pair)
 
 
 print('---------------------------------------------------')
