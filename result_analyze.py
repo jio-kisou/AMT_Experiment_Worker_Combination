@@ -32,6 +32,7 @@ class Ttest(object):
                 return False
         else:
             _, p = st.levene(self.data_frame1, self.data_frame2)
+            print("eq_val p: " + str(p))
             if p > self.alpha:
                 print("等分散性がある可能性がある")
                 return True
@@ -42,7 +43,7 @@ class Ttest(object):
     def t_test(self):
         bool_normal = self.normal_distribution_test()
         bool_eq_val = self.equal_variance_test(bool_normal)
-        if bool_eq_val:
+        if bool_normal and bool_eq_val:
             t, p = st.ttest_ind(self.data_frame1, self.data_frame2, equal_var=True)
             print("t_test p: " + str(p))
             if p > self.alpha:
@@ -62,3 +63,16 @@ class Ttest(object):
                 print("平均に差がない")
             else:
                 print("平均に差がある")
+
+    def var_analyze(self):
+        bool_normal = self.normal_distribution_test()
+        bool_eq_val = self.equal_variance_test(bool_normal)
+        if bool_normal and bool_eq_val:
+            f, p = st.f_oneway(self.data_frame1, self.data_frame2)
+            print("p: " + str(p))
+            if p > self.alpha:
+                print("平均に差がない")
+            else:
+                print("平均に差がある")
+        else:
+            print("分散分析できません")
