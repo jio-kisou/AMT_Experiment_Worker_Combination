@@ -83,7 +83,7 @@ def choice_teams(np_worker_vectors, data_num, worker_combi_num):
             for i in range(worker_combi_num):
                 cluster_list.append([])
             for i, cluster_num in enumerate(pred.tolist()):
-                cluster_list[cluster_num].append(deleted_data_ref_list[i])
+                cluster_list[int(cluster_num)].append(deleted_data_ref_list[i])
             for i in range(len(cluster_list)):
                 random.shuffle(cluster_list[i])
         for i in range(len(cluster_list)):
