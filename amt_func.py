@@ -61,6 +61,17 @@ def make_confusion_matrix(correct_answer_list, worker_answer_list, choice_num):
     return confusion_matrix_list, accurate_list
 
 
+def weight_answer_vectors(confusion_matrix_list, worker_answer_list):
+    n_choices = confusion_matrix_list[0].shape[0]
+    n_workers = len(confusion_matrix_list)
+    weight_answer_vectors = np.empty((n_workers, n_choices * len(worker_answer_list[0])))
+    for i, worker_answers in enumerate(worker_answer_list):
+        for j, worker_answer in enumerate(worker_answers):
+            for choice in range(n_choices):
+                weight_answer_vectors[i, j * n_choices + choice] = confusion_matrix_list[i][worker_answer, choice]
+    return weight_answer_vectors
+
+
 def choice_teams(np_worker_vectors, data_num, worker_combi_num):
     cluster_list = []
     for i in range(worker_combi_num):
@@ -130,6 +141,23 @@ def real_probability(worker_combi_list, worker_answer_list, correct_answer_list)
             for majority_choice in majority_list:
                 if correct_answer == majority_choice:
                     correct_num = correct_num + 1.0 / float(len(majority_list))
+        probability = correct_num / float(len(correct_answer_list))
+        probability_list.append(probability)
+    return mean(probability_list)
+
+
+def weighted_real_probability(worker_combi_list, weight_answer_vectors, correct_answer_list, data_num, choice_num):
+    probability_list = []
+    weight_answer_vectors_reshape = weight_answer_vectors.reshape([data_num, -1, choice_num])
+    for worker_combi in worker_combi_list:
+        correct_num = 0.0
+        for i, correct_answer in enumerate(correct_answer_list):
+            answers = np.zeros((choice_num,))
+            for worker in worker_combi:
+                answers = answers * weight_answer_vectors_reshape[worker, i, :]
+            majority = np.argmax(answers)
+            if correct_answer == majority:
+                correct_num = correct_num + 1.0
         probability = correct_num / float(len(correct_answer_list))
         probability_list.append(probability)
     return mean(probability_list)
