@@ -50,8 +50,8 @@ def k_init(X, n_clusters):
 def balanced_kmeans(X, n_clusters, max_iter=300):
     n_samples, n_features = X.shape
 
-    # k-means++で初期配置
-    centroids = k_init(X, n_clusters)
+    # ランダムに重心の初期値を初期化
+    centroids = X[np.random.choice(n_samples, n_clusters)]
 
     # 前の重心と比較するために、仮に新しい重心を入れておく配列を用意
     new_centroids = np.zeros((n_clusters, n_features))
