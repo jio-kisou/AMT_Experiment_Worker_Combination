@@ -9,7 +9,7 @@ from pyclustering.cluster import xmeans
 import pandas as pd
 from tqdm import tqdm
 from result_analyze import Ttest
-from amt_func import read_file, make_confusion_matrix, choice_teams, expectation, real_probability, distance_ranking
+from amt_func import read_file, make_confusion_matrix, choice_teams, expectation, real_probability, distance_ranking, weight_answer_vectors, weighted_real_probability
 import argparse
 
 
@@ -65,6 +65,9 @@ for i in sorted(low_accurate_list, reverse=True):
 for i in sorted(low_accurate_list, reverse=True):
     worker_answer_list.pop(i)
 
+#重み付きベクトル
+weight_answer_vectors = weight_answer_vectors(confusion_matrix_list, worker_answer_list)
+
 # one-hotベクトル化
 np_data = np.array(worker_answer_list).reshape(-1, 1)
 enc = OneHotEncoder(categories="auto", sparse=False, dtype=np.float32)
@@ -74,6 +77,9 @@ answer_data_remove_correct = np.delete(one_hot_data, correct_answer_ref, 1)
 
 correct_dim_twice_data = np.copy(one_hot_data)
 correct_dim_twice_data[:, correct_answer_ref] = correct_dim_twice_data[:, correct_answer_ref] * args.correct_weight
+
+if args.weight_on:
+    one_hot_data = weight_answer_vectors
 
 # worker間の距離のランキング
 # sorted_distance_dic = distance_ranking(answer_data_remove_correct, data_num)
@@ -102,7 +108,11 @@ for k in range(args.iter):
         result = expectation(confusion_matrix_combi, worker_combi_num, prior_probability)
         expectation_list.append(result)
     average_expectaion = mean(expectation_list)
-    average_probability = real_probability(worker_combi_list, worker_answer_list, correct_answer_list)
+    if args.weight_on:
+        average_probability = weighted_real_probability(worker_combi_list, one_hot_data, correct_answer_list, data_num,
+                                                        choice_num)
+    else:
+        average_probability = real_probability(worker_combi_list, worker_answer_list, correct_answer_list)
     print("simple one-hot vector expectation value: " + str(average_expectaion))
     print("elapsed_time:{0}".format(elapsed_time) + "[sec]")
     print("average probability: " + str(average_probability))
@@ -121,7 +131,11 @@ for k in range(args.iter):
         result = expectation(confusion_matrix_combi, worker_combi_num, prior_probability)
         expectation_list.append(result)
     average_expectaion = mean(expectation_list)
-    average_probability = real_probability(worker_combi_list, worker_answer_list, correct_answer_list)
+    if args.weight_on:
+        average_probability = weighted_real_probability(worker_combi_list, one_hot_data, correct_answer_list, data_num,
+                                                        choice_num)
+    else:
+        average_probability = real_probability(worker_combi_list, worker_answer_list, correct_answer_list)
     print("twice one-hot vector expectation value: " + str(average_expectaion))
     print("elapsed_time:{0}".format(elapsed_time) + "[sec]")
     print("average probability: " + str(average_probability))
@@ -139,7 +153,11 @@ for k in range(args.iter):
         result = expectation(confusion_matrix_combi, worker_combi_num, prior_probability)
         expectation_list.append(result)
     average_expectaion = mean(expectation_list)
-    average_probability = real_probability(worker_combi_list, worker_answer_list, correct_answer_list)
+    if args.weight_on:
+        average_probability = weighted_real_probability(worker_combi_list, one_hot_data, correct_answer_list, data_num,
+                                                        choice_num)
+    else:
+        average_probability = real_probability(worker_combi_list, worker_answer_list, correct_answer_list)
     print("removed one-hot vector expectation value: " + str(average_expectaion))
     print("elapsed_time:{0}".format(elapsed_time) + "[sec]")
     print("average probability: " + str(average_probability))
@@ -164,7 +182,11 @@ for k in range(args.iter):
         result = expectation(confusion_matrix_combi, worker_combi_num, prior_probability)
         expectation_list.append(result)
     average_expectaion = mean(expectation_list)
-    average_probability = real_probability(random_combi_list, worker_answer_list, correct_answer_list)
+    if args.weight_on:
+        average_probability = weighted_real_probability(worker_combi_list, one_hot_data, correct_answer_list, data_num,
+                                                        choice_num)
+    else:
+        average_probability = real_probability(worker_combi_list, worker_answer_list, correct_answer_list)
     print("random selected worker expectation value: " + str(average_expectaion))
     print("elapsed_time:{0}".format(elapsed_time) + "[sec]")
     print("average probability: " + str(average_probability))
