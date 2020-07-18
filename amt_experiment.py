@@ -86,7 +86,9 @@ list1 = []
 list2 = []
 list3 = []
 list4 = []
-for i in range(1):
+for k in range(args.iter):
+    print(str(k + 1) + "回目")
+
     start = time.time()
     worker_combi_list = choice_teams(one_hot_data, data_num, worker_combi_num)
     elapsed_time = time.time() - start
