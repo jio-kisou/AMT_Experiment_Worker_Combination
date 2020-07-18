@@ -9,14 +9,24 @@ from pyclustering.cluster import xmeans
 import pandas as pd
 from tqdm import tqdm
 from amt_func import read_file, make_confusion_matrix, choice_teams, expectation, real_probability, distance_ranking
+import argparse
 
-data_num = 50
-worker_combi_num = 5
-choices = list(range(0, 7))
-df = pd.DataFrame()
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-w', '--worker_num', type=int, default=50, required=True)
+parser.add_argument('-c', '--worker_combi_num', type=int, default=5, required=True)
+parser.add_argument('--correct_weight', type=float, default=2.0, required=True)
+parser.add_argument('--clustering', choices=['kmeans', 'sskmeans', 'bkmeans'])
+parser.add_argument('-i', '--iter', type=int, default=5, required=True)
+parser.add_argument('--ttest', action='store_true')
+parser.add_argument('--weight_on', action='store_true')
+
+args = parser.parse_args()
+data_num = args.worker_num
+worker_combi_num = args.worker_combi_num
 breed_to_choice_dic = {'Coyo': 0, 'Dhol': 1, 'Husk': 2, 'Alas': 3, 'Samo': 4, 'Germ': 5, 'wolf': 6}
 choice_num = len(breed_to_choice_dic)
-delete_list = list(range(15)) + list(range(16, 28)) + list(range(48, 102))
+
 
 # データ読み込み
 # all_df, correct_answer_list = read_file(breed_to_choice_dic)
@@ -62,7 +72,7 @@ one_hot_data = enc.fit_transform(np_data).reshape(data_num, -1)
 answer_data_remove_correct = np.delete(one_hot_data, correct_answer_ref, 1)
 
 correct_dim_twice_data = np.copy(one_hot_data)
-correct_dim_twice_data[:, correct_answer_ref] = correct_dim_twice_data[:, correct_answer_ref] * 2.0
+correct_dim_twice_data[:, correct_answer_ref] = correct_dim_twice_data[:, correct_answer_ref] * args.correct_weight
 
 # worker間の距離のランキング
 # sorted_distance_dic = distance_ranking(answer_data_remove_correct, data_num)
@@ -116,7 +126,6 @@ for i in range(1):
     list2.append(average_expectaion)
 
     start = time.time()
-    pred = KMeans(n_clusters=worker_combi_num).fit_predict(answer_data_remove_correct)
     worker_combi_list = choice_teams(answer_data_remove_correct, data_num, worker_combi_num)
     elapsed_time = time.time() - start
     expectation_list = []
