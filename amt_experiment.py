@@ -1,8 +1,6 @@
 import random
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.cluster import KMeans
-import itertools
 import collections
 import time
 from statistics import mean
