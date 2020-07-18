@@ -8,6 +8,7 @@ import pyclustering
 from pyclustering.cluster import xmeans
 import pandas as pd
 from tqdm import tqdm
+from result_analyze import Ttest
 from amt_func import read_file, make_confusion_matrix, choice_teams, expectation, real_probability, distance_ranking
 import argparse
 
@@ -174,3 +175,10 @@ print(mean(list1))
 print(mean(list2))
 print(mean(list3))
 print(mean(list4))
+
+if args.ttest:
+    df_list1 = pd.Series(list1)
+    df_list4 = pd.Series(list4)
+    test = Ttest(data_frame1=df_list1, data_frame2=df_list4, alpha=0.05)
+    test.t_test()
+    test.var_analyze()
