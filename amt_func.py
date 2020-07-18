@@ -3,9 +3,11 @@ import collections
 from tqdm import tqdm
 import pandas as pd
 import numpy as np
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, DBSCAN
 import itertools
 from statistics import mean
+from same_size_kmeans import EqualGroupsKMeans
+from balanced_kmeans_hungarian import balanced_kmeans
 
 
 def read_file(breed_to_choice_dic):
@@ -72,7 +74,7 @@ def weight_answer_vectors(confusion_matrix_list, worker_answer_list):
     return weight_answer_vectors
 
 
-def choice_teams(np_worker_vectors, data_num, worker_combi_num):
+def choice_teams(np_worker_vectors, data_num, worker_combi_num, clustering):
     cluster_list = []
     for i in range(worker_combi_num):
         cluster_list.append([])
@@ -89,7 +91,16 @@ def choice_teams(np_worker_vectors, data_num, worker_combi_num):
         if has_empty:
             deleted_np_worker_vectors = np.delete(np_worker_vectors, selected_worker_list, 0)
             deleted_data_ref_list = np.delete(np.array(data_ref_list), selected_worker_list).tolist()
-            pred = KMeans(n_clusters=worker_combi_num).fit_predict(deleted_np_worker_vectors)
+
+            if clustering == 'kmeans':
+                pred = KMeans(n_clusters=worker_combi_num).fit_predict(deleted_np_worker_vectors)
+            elif clustering == 'sskmeans':
+                pred = EqualGroupsKMeans(n_clusters=worker_combi_num).fit_predict(deleted_np_worker_vectors)
+            elif clustering == 'bkmeans':
+                pred = balanced_kmeans(deleted_np_worker_vectors, worker_combi_num)
+            else:
+                pred = DBSCAN(eps=25.0, min_samples=3).fit_predict(deleted_np_worker_vectors)
+
             cluster_list = []
             for i in range(worker_combi_num):
                 cluster_list.append([])

@@ -97,7 +97,7 @@ for k in range(args.iter):
     print(str(k + 1) + "回目")
 
     start = time.time()
-    worker_combi_list = choice_teams(one_hot_data, data_num, worker_combi_num)
+    worker_combi_list = choice_teams(one_hot_data, data_num, worker_combi_num, args.clustering)
     elapsed_time = time.time() - start
     # print(worker_combi_list)
     expectation_list = []
@@ -120,7 +120,7 @@ for k in range(args.iter):
     list1.append(average_probability)
 
     start = time.time()
-    worker_combi_list = choice_teams(correct_dim_twice_data, data_num, worker_combi_num)
+    worker_combi_list = choice_teams(correct_dim_twice_data, data_num, worker_combi_num, args.clustering)
     elapsed_time = time.time() - start
     # print(worker_combi_list)
     expectation_list = []
@@ -143,7 +143,7 @@ for k in range(args.iter):
     list2.append(average_probability)
 
     start = time.time()
-    worker_combi_list = choice_teams(answer_data_remove_correct, data_num, worker_combi_num)
+    worker_combi_list = choice_teams(answer_data_remove_correct, data_num, worker_combi_num, args.clustering)
     elapsed_time = time.time() - start
     expectation_list = []
     for worker_combi in worker_combi_list:
