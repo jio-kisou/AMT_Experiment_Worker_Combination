@@ -65,9 +65,9 @@ correct_dim_twice_data = np.copy(one_hot_data)
 correct_dim_twice_data[:, correct_answer_ref] = correct_dim_twice_data[:, correct_answer_ref] * 2.0
 
 # worker間の距離のランキング
-sorted_distance_dic = distance_ranking(answer_data_remove_correct, data_num)
-for i, pair in enumerate(sorted_distance_dic):
-    print(pair)
+# sorted_distance_dic = distance_ranking(answer_data_remove_correct, data_num)
+# for i, pair in enumerate(sorted_distance_dic):
+#     print(pair)
 
 
 print('---------------------------------------------------')
