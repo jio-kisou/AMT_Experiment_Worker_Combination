@@ -107,7 +107,7 @@ for k in range(args.iter):
     print("elapsed_time:{0}".format(elapsed_time) + "[sec]")
     print("average probability: " + str(average_probability))
     print('---------------------------------------------------')
-    list1.append(average_expectaion)
+    list1.append(average_probability)
 
     start = time.time()
     worker_combi_list = choice_teams(correct_dim_twice_data, data_num, worker_combi_num)
@@ -126,7 +126,7 @@ for k in range(args.iter):
     print("elapsed_time:{0}".format(elapsed_time) + "[sec]")
     print("average probability: " + str(average_probability))
     print('---------------------------------------------------')
-    list2.append(average_expectaion)
+    list2.append(average_probability)
 
     start = time.time()
     worker_combi_list = choice_teams(answer_data_remove_correct, data_num, worker_combi_num)
@@ -144,7 +144,7 @@ for k in range(args.iter):
     print("elapsed_time:{0}".format(elapsed_time) + "[sec]")
     print("average probability: " + str(average_probability))
     print('---------------------------------------------------')
-    list3.append(average_expectaion)
+    list3.append(average_probability)
 
     start = time.time()
     random_list = list(range(data_num))
@@ -169,7 +169,7 @@ for k in range(args.iter):
     print("elapsed_time:{0}".format(elapsed_time) + "[sec]")
     print("average probability: " + str(average_probability))
     print('---------------------------------------------------')
-    list4.append(average_expectaion)
+    list4.append(average_probability)
 
 print(mean(list1))
 print(mean(list2))
