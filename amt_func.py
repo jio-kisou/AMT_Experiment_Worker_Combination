@@ -6,8 +6,8 @@ import numpy as np
 from sklearn.cluster import KMeans, DBSCAN
 import itertools
 from statistics import mean
-from same_size_kmeans import EqualGroupsKMeans
-from balanced_kmeans_hungarian import balanced_kmeans
+from clustering.same_size_kmeans import EqualGroupsKMeans
+from clustering.balanced_kmeans_hungarian import balanced_kmeans
 
 
 def read_file(breed_to_choice_dic):
