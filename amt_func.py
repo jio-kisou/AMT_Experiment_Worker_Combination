@@ -63,6 +63,18 @@ def make_confusion_matrix(correct_answer_list, worker_answer_list, choice_num):
     return confusion_matrix_list, accurate_list
 
 
+def each_choice_prob(correct_answer_list, worker_answer_list, choice_num):
+    choice_prob_list = []
+    worker_num = len(worker_answer_list)
+    for question_num, correct_answer in enumerate(correct_answer_list):
+        each_choice_count = [0.0] * choice_num
+        for worker_answer in worker_answer_list:
+            each_choice_count[worker_answer[question_num]] = each_choice_count[worker_answer[question_num]] + 1.0
+        each_choice_count = list(map(lambda x: x / float(worker_num), each_choice_count))
+        choice_prob_list.append(each_choice_count)
+    return choice_prob_list
+
+
 def weight_answer_vectors(confusion_matrix_list, worker_answer_list):
     n_choices = confusion_matrix_list[0].shape[0]
     n_workers = len(confusion_matrix_list)
