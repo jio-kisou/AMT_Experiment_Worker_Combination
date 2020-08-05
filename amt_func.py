@@ -110,8 +110,8 @@ def choice_teams(np_worker_vectors, data_num, worker_combi_num, clustering):
                 pred = EqualGroupsKMeans(n_clusters=worker_combi_num).fit_predict(deleted_np_worker_vectors)
             elif clustering == 'bkmeans':
                 pred = balanced_kmeans(deleted_np_worker_vectors, worker_combi_num)
-            else:
-                pred = DBSCAN(eps=25.0, min_samples=3).fit_predict(deleted_np_worker_vectors)
+            elif clustering == 'dbscan':
+                pred = DBSCAN(eps=15.0, min_samples=3).fit_predict(deleted_np_worker_vectors)
 
             cluster_list = []
             for i in range(worker_combi_num):
