@@ -8,6 +8,8 @@ import itertools
 from statistics import mean
 from clustering.same_size_kmeans import EqualGroupsKMeans
 from clustering.balanced_kmeans_hungarian import balanced_kmeans
+from true_calc_cost import true_correct_correct_cost, true_correct_mis_cost, true_mis_dif_cost, true_mis_same_cost
+from tqdm import tqdm
 
 
 def read_file(breed_to_choice_dic):
@@ -73,6 +75,40 @@ def each_choice_prob(correct_answer_list, worker_answer_list, choice_num):
         each_choice_count = list(map(lambda x: x / float(worker_num), each_choice_count))
         choice_prob_list.append(each_choice_count)
     return choice_prob_list
+
+
+def make_cost_matrix(correct_answer_list, worker_answer_list, choice_num):
+    choice_prob_list = each_choice_prob(correct_answer_list, worker_answer_list, choice_num)
+    worker_num = len(worker_answer_list)
+    cost_matrix = np.zeros((worker_num, worker_num))
+    for i in tqdm(range(worker_num)):
+        for j in range(worker_num):
+            if i <= j:
+                cost_i_j = 0
+                for q_num in range(len(correct_answer_list)):
+                    if worker_answer_list[i][q_num] == correct_answer_list[q_num]:
+                        if worker_answer_list[j][q_num] == correct_answer_list[q_num]:
+                            cost = true_correct_correct_cost(choice_prob_list, q_num, correct_answer_list[q_num], choice_num)
+                            cost_i_j = cost_i_j + cost
+                        else:
+                            cost = true_correct_mis_cost(choice_prob_list, q_num, correct_answer_list[q_num],
+                                                    worker_answer_list[j][q_num], choice_num)
+                            cost_i_j = cost_i_j + cost
+                    elif worker_answer_list[j][q_num] == correct_answer_list[q_num]:
+                        cost = true_correct_mis_cost(choice_prob_list, q_num, correct_answer_list[q_num],
+                                                worker_answer_list[j][q_num], choice_num)
+                        cost_i_j = cost_i_j + cost
+                    elif worker_answer_list[i][q_num] == worker_answer_list[j][q_num]:
+                        cost = true_mis_same_cost(choice_prob_list, q_num, correct_answer_list[q_num],
+                                             worker_answer_list[i][q_num], choice_num)
+                        cost_i_j = cost_i_j + cost
+                    else:
+                        cost = true_mis_dif_cost(choice_prob_list, q_num, correct_answer_list[q_num],
+                                            worker_answer_list[i][q_num], worker_answer_list[j][q_num], choice_num)
+                        cost_i_j = cost_i_j + cost
+                cost_matrix[i, j] = cost_i_j / float(len(correct_answer_list))
+                cost_matrix[j, i] = cost_i_j / float(len(correct_answer_list))
+    return cost_matrix
 
 
 def weight_answer_vectors(confusion_matrix_list, worker_answer_list):
