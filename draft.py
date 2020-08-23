@@ -504,3 +504,97 @@ print(average_expectaion2)
 #         worker_combi_list.append(worker_combi)
 #         i = i + 1
 #     return worker_combi_list
+
+
+def correct_correct_cost(choice_prob_list, q_num, correct_answer, choice_num):
+    cost = 0.0
+    for i in range(choice_num):
+        if i != correct_answer:
+            cost = cost + choice_prob_list[q_num][i] ** 3
+    for i in range(choice_num):
+        if i != correct_answer:
+            for j in range(choice_num):
+                if j != i and j != correct_answer:
+                    cost = cost + pow(choice_prob_list[q_num][i], 2) * choice_prob_list[q_num][j] * 3.0 / 2.0
+    return cost
+
+
+def correct_mis_cost(choice_prob_list, q_num, correct_answer, mis_answer, choice_num):
+    anti_cost = 0.0
+    anti_cost = anti_cost + choice_prob_list[q_num][correct_answer] ** 3
+
+    sub_cost1 = 0.0
+    for i in range(choice_num):
+        if i != correct_answer:
+            sub_cost1 = sub_cost1 + choice_prob_list[q_num][i]
+    sub_cost1 = sub_cost1 * 3.0 * choice_prob_list[q_num][correct_answer] ** 2
+
+    sub_cost2 = 0.0
+    for i in range(choice_num):
+        for j in range(choice_num):
+            if i < j and i != correct_answer and i != mis_answer and j != correct_answer and j != mis_answer:
+                sub_cost2 = sub_cost2 + choice_prob_list[q_num][i] * choice_prob_list[q_num][j]
+    sub_cost2 = sub_cost2 * choice_prob_list[q_num][correct_answer] * 6.0
+
+    sub_cost3 = 0.0
+    for i in range(choice_num):
+        if i != correct_answer and i != mis_answer:
+            sub_cost3 = sub_cost3 + choice_prob_list[q_num][i]
+    sub_cost3 = sub_cost3 * choice_prob_list[q_num][correct_answer] * choice_prob_list[q_num][mis_answer] * 6.0 / 2.0
+
+    sub_cost4 = 0.0
+    for i in range(choice_num):
+        if i != correct_answer and i != mis_answer:
+            sub_cost4 = sub_cost4 + choice_prob_list[q_num][i] ** 2
+    sub_cost4 = sub_cost4 * choice_prob_list[q_num][correct_answer] * 3.0 / 2.0
+
+    sub_cost5 = 0.0
+    for i in range(choice_num):
+        if i != correct_answer and i != mis_answer:
+            for j in range(choice_num):
+                if j != correct_answer and j != mis_answer:
+                    for k in range(choice_num):
+                        if j != correct_answer and j != mis_answer and i < j < k:
+                            sub_cost5 = sub_cost5 + choice_prob_list[q_num][i] * choice_prob_list[q_num][j]\
+                                        * choice_prob_list[q_num][i]
+    sub_cost5 = sub_cost5 * 6.0 / 5.0
+
+    anti_cost = anti_cost + sub_cost1 + sub_cost2 + sub_cost3 + sub_cost4 + sub_cost5
+    return 1.0 - anti_cost
+
+
+def mis_dif_cost(choice_prob_list, q_num, correct_answer, mis_answer1, mis_answer2, choice_num):
+    anti_cost = 0.0
+    anti_cost = anti_cost + choice_prob_list[q_num][correct_answer] ** 3
+
+    sub_cost1 = 0.0
+    for i in range(choice_num):
+        if i != correct_answer and i != mis_answer1 and i != mis_answer2:
+            sub_cost1 = sub_cost1 + choice_prob_list[q_num][i]
+    sub_cost1 = sub_cost1 * 3.0 * choice_prob_list[q_num][correct_answer] ** 2
+
+    sub_cost2 = 3.0 / 2.0 * choice_prob_list[q_num][mis_answer1] * choice_prob_list[q_num][correct_answer] ** 2
+    sub_cost3 = 3.0 / 2.0 * choice_prob_list[q_num][mis_answer2] * choice_prob_list[q_num][correct_answer] ** 2
+
+    sub_cost4 = 0.0
+    for i in range(choice_num):
+        for j in range(choice_num):
+            if i < j and i != correct_answer and i != mis_answer1 and i != mis_answer2 and j != correct_answer \
+                    and j != mis_answer1 and j != mis_answer2:
+                sub_cost4 = sub_cost4 + choice_prob_list[q_num][i] * choice_prob_list[q_num][j]
+    sub_cost4 = sub_cost4 * choice_prob_list[q_num][correct_answer] * 6.0 / 5.0
+
+    anti_cost = anti_cost + sub_cost1 + sub_cost2 + sub_cost3 + sub_cost4
+    return 1.0 - anti_cost
+
+
+def mis_same_cost(choice_prob_list, q_num, correct_answer, mis_answer, choice_num):
+    anti_cost = 0.0
+    anti_cost = anti_cost + choice_prob_list[q_num][correct_answer] ** 3
+    sub_cost = 0.0
+    for i in range(choice_num):
+        if i != correct_answer and i != mis_answer:
+            sub_cost = sub_cost + choice_prob_list[q_num][i]
+    sub_cost = sub_cost * 3.0 / 2.0 * choice_prob_list[q_num][correct_answer] ** 2
+    anti_cost = anti_cost + sub_cost
+    return 1.0 - anti_cost
