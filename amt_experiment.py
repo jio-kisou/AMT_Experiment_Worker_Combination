@@ -39,11 +39,6 @@ correct_answer_ref = []
 for i in range(len(correct_answer_list)):
     correct_answer_ref.append(i*7 + correct_answer_list[i])
 
-# 事前確率
-prior_probability = collections.Counter(correct_answer_list)
-for key in prior_probability:
-    prior_probability[key] = float(prior_probability[key]) / float(len(correct_answer_list))
-
 # ワーカーの回答リスト
 worker_answer_list = []
 for index, row in all_df.iterrows():
@@ -52,6 +47,23 @@ for index, row in all_df.iterrows():
         if bool_value:
             worker_answers.append(i % choice_num)
     worker_answer_list.append(worker_answers)
+
+
+#訓練とテストの分割
+np_worker_answer = np.array(worker_answer_list)
+np_worker_answer = np_worker_answer.T
+np_correct_answer = np.array(correct_answer_list)
+w_answer_train, w_answer_test, correct_train, correct_test = train_test_split(np_worker_answer, np_correct_answer,
+                                                                              test_size=0.5, random_state=0,
+                                                                              stratify=np_correct_answer)
+
+w_answer_train = w_answer_train.T.tolist()
+correct_train = correct_train.tolist()
+
+# 事前確率
+prior_probability = collections.Counter(correct_answer_list)
+for key in prior_probability:
+    prior_probability[key] = float(prior_probability[key]) / float(len(correct_answer_list))
 
 # 混同行列と足切り
 confusion_matrix_list, accurate_list = make_confusion_matrix(correct_answer_list, worker_answer_list, choice_num)
