@@ -6,7 +6,8 @@ import time
 from statistics import mean
 import pandas as pd
 from result_analyze import Ttest
-from amt_func import read_file, make_confusion_matrix, choice_teams, expectation, real_probability, distance_ranking, weight_answer_vectors, weighted_real_probability
+from amt_func import read_file, make_confusion_matrix, choice_teams, expectation, real_probability, distance_ranking,\
+     weight_answer_vectors, weighted_real_probability, make_cost_matrix
 import argparse
 from sklearn.model_selection import train_test_split
 
@@ -15,7 +16,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-w', '--worker_num', type=int, default=50, required=True)
 parser.add_argument('-c', '--worker_combi_num', type=int, default=5, required=True)
 parser.add_argument('--correct_weight', type=float, default=2.0, required=True)
-parser.add_argument('--clustering', choices=['kmeans', 'sskmeans', 'bkmeans', 'dbscan'])
+parser.add_argument('--clustering', choices=['kmeans', 'sskmeans', 'bkmeans', 'dbscan', 'bkmedoids'])
 parser.add_argument('-i', '--iter', type=int, default=5, required=True)
 parser.add_argument('--ttest', action='store_true')
 parser.add_argument('--weight_on', action='store_true')
@@ -77,6 +78,12 @@ for i in sorted(low_accurate_list, reverse=True):
     w_answer_train.pop(i)
     w_answer_test.pop(i)
 
+#コスト行列
+# cost_matrix = make_cost_matrix(correct_train, w_answer_train, choice_num)
+# pd.to_pickle(cost_matrix, 'cost_matrix.pkl')
+# sys.exit()
+cost_matrix = pd.read_pickle("cost_matrix.pkl")
+
 #重み付きベクトル
 weight_answer_vectors_train = weight_answer_vectors(confusion_matrix_list, w_answer_train)
 weight_answer_vectors_test = weight_answer_vectors(confusion_matrix_list, w_answer_test)
@@ -113,7 +120,7 @@ for k in range(args.iter):
     print(str(k + 1) + "回目")
 
     start = time.time()
-    worker_combi_list = choice_teams(one_hot_data_train, data_num, worker_combi_num, args.clustering)
+    worker_combi_list = choice_teams(one_hot_data_train, cost_matrix, data_num, worker_combi_num, args.clustering)
     elapsed_time = time.time() - start
     # print(worker_combi_list)
     expectation_list = []
@@ -136,7 +143,7 @@ for k in range(args.iter):
     list1.append(average_probability)
 
     start = time.time()
-    worker_combi_list = choice_teams(cor_dim_times_data, data_num, worker_combi_num, args.clustering)
+    worker_combi_list = choice_teams(cor_dim_times_data, cost_matrix, data_num, worker_combi_num, args.clustering)
     elapsed_time = time.time() - start
     # print(worker_combi_list)
     expectation_list = []
@@ -159,7 +166,7 @@ for k in range(args.iter):
     list2.append(average_probability)
 
     start = time.time()
-    worker_combi_list = choice_teams(answer_data_remove_correct, data_num, worker_combi_num, args.clustering)
+    worker_combi_list = choice_teams(answer_data_remove_correct, cost_matrix, data_num, worker_combi_num, args.clustering)
     elapsed_time = time.time() - start
     expectation_list = []
     for worker_combi in worker_combi_list:
@@ -199,10 +206,10 @@ for k in range(args.iter):
         expectation_list.append(result)
     average_expectaion = mean(expectation_list)
     if args.weight_on:
-        average_probability = weighted_real_probability(worker_combi_list, one_hot_data_test, correct_test,
+        average_probability = weighted_real_probability(random_combi_list, one_hot_data_test, correct_test,
                                                         data_num, choice_num)
     else:
-        average_probability = real_probability(worker_combi_list, w_answer_test, correct_test)
+        average_probability = real_probability(random_combi_list, w_answer_test, correct_test)
     print("random selected worker expectation value: " + str(average_probability))
     print("elapsed_time:{0}".format(elapsed_time) + "[sec]")
     print("average probability: " + str(average_probability))

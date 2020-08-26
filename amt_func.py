@@ -8,6 +8,7 @@ import itertools
 from statistics import mean
 from clustering.same_size_kmeans import EqualGroupsKMeans
 from clustering.balanced_kmeans_hungarian import balanced_kmeans
+from clustering.kmedoids import BalancedKmedoids
 from true_calc_cost import true_correct_correct_cost, true_correct_mis_cost, true_mis_dif_cost, true_mis_same_cost
 from tqdm import tqdm
 
@@ -122,7 +123,7 @@ def weight_answer_vectors(confusion_matrix_list, worker_answer_list):
     return weight_answer_vectors
 
 
-def choice_teams(np_worker_vectors, data_num, worker_combi_num, clustering):
+def choice_teams(np_worker_vectors, cost_matrix, data_num, worker_combi_num, clustering):
     cluster_list = []
     for i in range(worker_combi_num):
         cluster_list.append([])
@@ -148,6 +149,8 @@ def choice_teams(np_worker_vectors, data_num, worker_combi_num, clustering):
                 pred = balanced_kmeans(deleted_np_worker_vectors, worker_combi_num)
             elif clustering == 'dbscan':
                 pred = DBSCAN(eps=15.0, min_samples=3).fit_predict(deleted_np_worker_vectors)
+            elif clustering == 'bkmedoids':
+                pred = BalancedKmedoids(n_cluster=worker_combi_num).fit_predict(cost_matrix)[0]
 
             cluster_list = []
             for i in range(worker_combi_num):
