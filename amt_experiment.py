@@ -34,11 +34,6 @@ choice_num = len(breed_to_choice_dic)
 all_df = pd.read_pickle("all_df.pkl")
 correct_answer_list = pd.read_pickle("correct_answer_list.pkl")
 
-# vectorでの正当の次元
-correct_answer_ref = []
-for i in range(len(correct_answer_list)):
-    correct_answer_ref.append(i*7 + correct_answer_list[i])
-
 # ワーカーの回答リスト
 worker_answer_list = []
 for index, row in all_df.iterrows():
@@ -47,7 +42,6 @@ for index, row in all_df.iterrows():
         if bool_value:
             worker_answers.append(i % choice_num)
     worker_answer_list.append(worker_answers)
-
 
 #訓練とテストの分割
 np_worker_answer = np.array(worker_answer_list)
@@ -59,6 +53,11 @@ w_answer_train, w_answer_test, correct_train, correct_test = train_test_split(np
 
 w_answer_train = w_answer_train.T.tolist()
 correct_train = correct_train.tolist()
+
+# vectorでの正答の次元
+correct_answer_train_ref = []
+for i in range(len(correct_train)):
+    correct_answer_train_ref.append(i * choice_num + correct_train[i])
 
 # 事前確率
 prior_probability = collections.Counter(correct_answer_list)
