@@ -88,7 +88,7 @@ class Kmedoids(object):
                 new_medoid = cluster[i][new_medoid_index]
                 medoids.append(new_medoid)
 
-        return assigned_cluster_list, cluster
+        return np.array(assigned_cluster_list), cluster
 
 
 class BalancedKmedoids(object):
@@ -166,7 +166,7 @@ class BalancedKmedoids(object):
                 new_medoid = cluster[i][new_medoid_index]
                 medoids.append(new_medoid)
 
-        return assigned_cluster_list, cluster
+        return np.array(assigned_cluster_list), cluster
 
 
 class RandomBalancedKmedoids(object):
@@ -234,4 +234,4 @@ class RandomBalancedKmedoids(object):
                 new_medoid = cluster[i][new_medoid_index]
                 medoids.append(new_medoid)
 
-        return assigned_cluster_list, cluster
+        return np.array(assigned_cluster_list), cluster
