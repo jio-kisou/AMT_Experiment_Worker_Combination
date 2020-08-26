@@ -4,10 +4,7 @@ from sklearn.preprocessing import OneHotEncoder
 import collections
 import time
 from statistics import mean
-import pyclustering
-from pyclustering.cluster import xmeans
 import pandas as pd
-from tqdm import tqdm
 from result_analyze import Ttest
 from amt_func import read_file, make_confusion_matrix, choice_teams, expectation, real_probability, distance_ranking, weight_answer_vectors, weighted_real_probability
 import argparse
